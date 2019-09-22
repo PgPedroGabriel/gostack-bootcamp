@@ -5,7 +5,6 @@ import User from '../models/User';
 import File from '../models/File';
 import Appointment from '../models/Appointment';
 import Notification from '../schemas/Notification';
-import Mail from '../../lib/Mail';
 
 class AppointmentController {
   async index(req, res) {
@@ -137,23 +136,9 @@ class AppointmentController {
         error: 'Nesse horário você não pode cancelar.',
       });
     }
-
     appointment.canceled_at = new Date();
 
     await appointment.save();
-
-    await Mail.sendMail({
-      to: `${appointment.provider.name} <${appointment.provider.email}>`,
-      subject: 'Agendamento cancelado',
-      template: 'cancellation',
-      context: {
-        provider: appointment.provider.name,
-        user: appointment.user.name,
-        date: format(appointment.date, "dd  'de' MMMM', às' H:mm'h", {
-          locale: pt,
-        }),
-      },
-    });
 
     return res.json(appointment);
   }

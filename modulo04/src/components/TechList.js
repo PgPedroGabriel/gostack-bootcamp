@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import TechItem from './TechItem';
+
 class TechList extends Component {
 
   state = {
@@ -45,12 +47,11 @@ class TechList extends Component {
         <ul>
           {
             this.state.techs.map(tech => (
-              <li key={tech}>
-                {tech}
-                <button onClick={() => this.handleDelete(tech)} type="button">Deletar</button>
-              </li>
-            )
-            )
+              <TechItem
+                key={tech}
+                tech={tech}
+                onDelete={() => this.handleDelete(tech)} />
+            ))
           }
         </ul>
       </form>

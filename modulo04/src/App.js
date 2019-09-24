@@ -2,8 +2,10 @@ import React from 'react';
 
 import testImg from './assets/test.png';
 
+import TechList from './components/TechList';
+
 function App() {
-  return <img src={testImg} />
+  return <TechList />
 }
 
 export default App;

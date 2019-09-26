@@ -7,6 +7,18 @@ class TechList extends Component {
 
   };
 
+  componentDidMount() {
+
+  }
+
+  componentDidUpdate () {
+    
+  }
+
+  componentDidUnmount(){
+
+  }
+
   state = {
     newTech: '',
     techs: [

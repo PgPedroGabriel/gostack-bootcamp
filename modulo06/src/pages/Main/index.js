@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-community/async-storage';
+import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import {
@@ -14,6 +16,8 @@ import {
   ProfileButton,
   ProfileButtonText,
   Name,
+  HoldingContent,
+  TextHelp,
 } from './styles';
 
 export default class Main extends Component {
@@ -27,6 +31,46 @@ export default class Main extends Component {
       error: false,
     };
   }
+
+  async componentDidMount() {
+    const usersString = await AsyncStorage.getItem('users');
+
+    if (usersString !== 'null') {
+      this.setState({ users: JSON.parse(usersString) });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { users } = this.state;
+
+    if (prevState.users !== users) {
+      AsyncStorage.setItem('users', JSON.stringify(users));
+    }
+  }
+
+  handleRemove = user => {
+    Alert.alert(
+      'Excluir',
+      'Você tem certeza que quer excluir este usuário de sua lista?',
+      [
+        { text: 'Não, foi mal', onPress: () => {} },
+        {
+          text: 'Sim, quero',
+          onPress: () => {
+            const { users } = this.state;
+
+            if (!users.length) {
+              return;
+            }
+
+            const usersNew = users.filter(u => u.login !== user.login);
+            AsyncStorage.setItem('users', JSON.stringify(usersNew));
+            this.setState({ users: usersNew });
+          },
+        },
+      ]
+    );
+  };
 
   handleButton = async () => {
     const { newUser, users, loading } = this.state;
@@ -59,12 +103,18 @@ export default class Main extends Component {
 
       Keyboard.dismiss();
     } catch (e) {
+      console.log(e);
       this.setState({ loading: false, error: true });
 
       setTimeout(() => {
         this.setState({ error: false });
       }, 1500);
     }
+  };
+
+  handleNavigate = user => {
+    const { navigation } = this.props;
+    navigation.navigate('User', { user });
   };
 
   render() {
@@ -102,20 +152,31 @@ export default class Main extends Component {
             bgColor={color}
             onPress={this.handleButton}
           >
-            <Icon name={icon} size={20} color="#FFF" />
+            {loading ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <Icon name={icon} size={20} color="#FFF" />
+            )}
           </SubmitButton>
         </Form>
+        <TextHelp>Segure para excluir</TextHelp>
         <List
           data={users}
           keyExtractor={user => user.login}
           renderItem={({ item }) => (
-            <User>
-              <Avatar source={{ uri: item.avatar }} />
-              <Name>{item.name}</Name>
-              <ProfileButton onPress={() => {}}>
-                <ProfileButtonText>Ver perfil</ProfileButtonText>
-              </ProfileButton>
-            </User>
+            <HoldingContent
+              onLongPress={() => this.handleRemove(item)}
+              onPress={() => this.handleNavigate(item)}
+              underlayColor="white"
+            >
+              <User>
+                <Avatar source={{ uri: item.avatar }} />
+                <Name>{item.name}</Name>
+                <ProfileButton onPress={() => this.handleNavigate(item)}>
+                  <ProfileButtonText>Ver perfil</ProfileButtonText>
+                </ProfileButton>
+              </User>
+            </HoldingContent>
           )}
         />
       </Container>
@@ -125,4 +186,10 @@ export default class Main extends Component {
 
 Main.navigationOptions = {
   title: 'Usuários favoritos do Git',
+};
+
+Main.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
 };

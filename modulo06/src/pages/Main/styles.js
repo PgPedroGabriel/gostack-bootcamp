@@ -34,6 +34,11 @@ export const SubmitButton = styled(RectButton)`
   opacity: ${props => (props.disabled ? 0.5 : 1)};
 `;
 
+export const HoldingContent = styled.TouchableHighlight`
+  flex-basis: 0;
+  flex-grow: 1;
+`;
+
 export const List = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
   numColumns: 2,
@@ -41,8 +46,6 @@ export const List = styled.FlatList.attrs({
   margin-top: 20px;
 `;
 export const User = styled.View`
-  flex-basis: 0;
-  flex-grow: 1;
   align-items: center;
   margin: 0 0px 30px;
 `;
@@ -81,5 +84,10 @@ export const Name = styled.Text`
   color: #333;
   font-weight: bold;
   margin-top: 4px;
+  text-align: center;
+`;
+export const TextHelp = styled.Text`
+  font-size: 10px;
+  color: #333;
   text-align: center;
 `;

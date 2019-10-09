@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-
+import { PropTypes } from 'prop-types';
 import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
@@ -11,20 +10,9 @@ import {
 import { Container, ProductTable, Total } from './styles';
 
 class Cart extends Component {
-  constructor() {
-    super();
-    this.state = {
-      products: [],
-    };
-  }
-
-  componentDidMount() {
-    const { products } = this.props;
-    this.setState({ products });
-  }
-
   render() {
-    const { products } = this.state;
+    const { products } = this.props;
+    console.log(products);
 
     return (
       <Container>
@@ -47,8 +35,8 @@ class Cart extends Component {
                 </td>
 
                 <td>
-                  <strong>{product.price}</strong>
-                  <span>{product.priceFormatted}</span>
+                  <strong>{product.title}</strong>
+                  <span>{product.priceFormated}</span>
                 </td>
 
                 <td>
@@ -91,15 +79,32 @@ class Cart extends Component {
     );
   }
 }
-
 Cart.propTypes = {
-  products: PropTypes.arrayOf,
+  products: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      image: PropTypes.string,
+      price: PropTypes.number,
+      priceFormated: PropTypes.string,
+      title: PropTypes.string,
+    })
+  ),
 };
 
 Cart.defaultProps = {
-  products: [],
+  products: [
+    {
+      id: 1,
+      image:
+        'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis1.jpg',
+      price: 179.9,
+      priceFormated: 'R$ 179,90',
+      title: 'Tênis de Caminhada Leve Confortável',
+    },
+  ],
 };
 
-export default connect(state => ({
+const mapStateToProps = state => ({
   products: state.cart,
-}))(Cart);
+});
+export default connect(mapStateToProps)(Cart);

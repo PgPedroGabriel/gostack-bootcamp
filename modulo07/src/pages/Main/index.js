@@ -8,24 +8,31 @@ import { formatPrice } from '../../util/format';
 import api from '../../services/api';
 
 class Main extends Component {
-  constructor() {
-    super();
-
+  constructor(props) {
+    super(props);
     this.state = {
       products: [],
       showAlert: false,
     };
+
+    this.isDidMounted = true;
   }
 
   async componentDidMount() {
     const response = await api.get('/products');
 
-    const data = response.data.map(product => ({
-      ...product,
-      priceFormated: formatPrice(product.price),
-    }));
+    if (this.isDidMounted) {
+      const data = response.data.map(product => ({
+        ...product,
+        priceFormated: formatPrice(product.price),
+      }));
 
-    this.setState({ products: data });
+      this.setState({ products: data });
+    }
+  }
+
+  componentWillUnmount() {
+    this.isDidMounted = false;
   }
 
   addToCart = product => {
@@ -37,7 +44,11 @@ class Main extends Component {
     });
 
     this.setState({ showAlert: true });
-    setTimeout(() => this.setState({ showAlert: false }), 1500);
+    setTimeout(() => {
+      if (this.isDidMounted) {
+        this.setState({ showAlert: false });
+      }
+    }, 1500);
     window.scrollTo(0, 0);
   };
 

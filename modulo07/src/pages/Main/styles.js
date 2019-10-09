@@ -67,3 +67,20 @@ export const ProductList = styled.div`
     }
   }
 `;
+
+export const Alert = styled.div`
+  width: 100%;
+  padding: 10px 0px;
+  margin-bottom: 10px;
+  background: #2ecc71;
+  display: flex;
+  opacity: ${props => (props.display === 'true' ? '1' : '0')};
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s linear;
+
+  strong {
+    font-size: 15px;
+    color: #fff;
+  }
+`;

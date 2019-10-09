@@ -1,26 +1,84 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { MdAddShoppingCart } from 'react-icons/md';
-import { ProductList } from './styles';
+import PropTypes from 'prop-types';
 
-export default class Main extends Component {
+import { ProductList, Alert } from './styles';
+import { formatPrice } from '../../util/format';
+import api from '../../services/api';
+
+class Main extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      products: [],
+      showAlert: false,
+    };
+  }
+
+  async componentDidMount() {
+    const response = await api.get('/products');
+
+    const data = response.data.map(product => ({
+      ...product,
+      priceFormated: formatPrice(product.price),
+    }));
+
+    this.setState({ products: data });
+  }
+
+  addToCart = product => {
+    const { dispatch } = this.props;
+
+    dispatch({
+      type: 'ADD_TO_CART',
+      product,
+    });
+
+    this.setState({ showAlert: true });
+    setTimeout(() => this.setState({ showAlert: false }), 1500);
+    window.scrollTo(0, 0);
+  };
+
   render() {
+    const { products, showAlert } = this.state;
     return (
-      <ProductList>
-        <li>
-          <img
-            src="https://a1.vnda.com.br/cristofoli/2019/02/25/12001-02-sapato-social-de-couro-cristofoli-preto-2201.jpg?1551053903"
-            alt="produto"
-          />
-          <strong>Produto 1</strong>
-          <span>R$ 150,00</span>
-          <button type="button">
-            <div>
-              <MdAddShoppingCart size={16} color="#fff" />1
-            </div>
-            <span>Adicionar ao carrinho</span>
-          </button>
-        </li>
-      </ProductList>
+      <>
+        <Alert display={showAlert.toString()}>
+          <strong>Produto adicionado com sucesso!</strong>
+        </Alert>
+        <ProductList>
+          {products.map(product => (
+            <li key={product.id}>
+              <img src={product.image} alt={product.title} />
+              <strong>{product.title}</strong>
+              <span>{product.priceFormated}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  this.addToCart(product);
+                }}
+              >
+                <div>
+                  <MdAddShoppingCart size={16} color="#fff" />1
+                </div>
+                <span>Adicionar ao carrinho</span>
+              </button>
+            </li>
+          ))}
+        </ProductList>
+      </>
     );
   }
 }
+
+Main.propTypes = {
+  dispatch: PropTypes.func,
+};
+
+Main.defaultProps = {
+  dispatch: () => {},
+};
+
+export default connect()(Main);

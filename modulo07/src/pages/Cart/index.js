@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import {
   MdAddCircleOutline,
@@ -8,59 +10,72 @@ import {
 
 import { Container, ProductTable, Total } from './styles';
 
-export default class Cart extends Component {
+class Cart extends Component {
+  constructor() {
+    super();
+    this.state = {
+      products: [],
+    };
+  }
+
+  componentDidMount() {
+    const { products } = this.props;
+    this.setState({ products });
+  }
+
   render() {
+    const { products } = this.state;
+
     return (
       <Container>
         <ProductTable>
           <thead>
             <tr>
-              <th />
+              <th>&nbsp;</th>
               <th>Produto</th>
               <th>Quantidade</th>
               <th>Subtotal</th>
-              <th />
+              <th>&nbsp;</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr>
-              <td>
-                <img
-                  src="https://a1.vnda.com.br/cristofoli/2019/02/25/12001-02-sapato-social-de-couro-cristofoli-preto-2201.jpg?1551053903"
-                  alt="Produto 1"
-                />
-              </td>
+            {products.map(product => (
+              <tr key={product.id}>
+                <td>
+                  <img src={product.image} alt={product.title} />
+                </td>
 
-              <td>
-                <strong>Produto 1</strong>
-                <span>R$ 150,00</span>
-              </td>
+                <td>
+                  <strong>{product.price}</strong>
+                  <span>{product.priceFormatted}</span>
+                </td>
 
-              <td>
-                <div>
+                <td>
+                  <div>
+                    <button type="button" onClick={() => {}}>
+                      <MdRemoveCircleOutline size={20} color="#7159c1" />
+                    </button>
+
+                    <input type="number" readOnly value={1} />
+
+                    <button type="button" onClick={() => {}}>
+                      <MdAddCircleOutline size={20} color="#7159c1" />
+                    </button>
+                  </div>
+                </td>
+
+                <td>
+                  <strong>R$ 150,00</strong>
+                </td>
+
+                <td>
                   <button type="button" onClick={() => {}}>
-                    <MdRemoveCircleOutline size={20} color="#7159c1" />
+                    <MdDelete size={20} color="#7159c1" />
                   </button>
-
-                  <input type="number" readOnly value={1} />
-
-                  <button type="button" onClick={() => {}}>
-                    <MdAddCircleOutline size={20} color="#7159c1" />
-                  </button>
-                </div>
-              </td>
-
-              <td>
-                <strong>R$ 150,00</strong>
-              </td>
-
-              <td>
-                <button type="button" onClick={() => {}}>
-                  <MdDelete size={20} color="#7159c1" />
-                </button>
-              </td>
-            </tr>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </ProductTable>
 
@@ -76,3 +91,15 @@ export default class Cart extends Component {
     );
   }
 }
+
+Cart.propTypes = {
+  products: PropTypes.arrayOf,
+};
+
+Cart.defaultProps = {
+  products: [],
+};
+
+export default connect(state => ({
+  products: state.cart,
+}))(Cart);

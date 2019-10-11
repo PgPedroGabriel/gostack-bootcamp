@@ -10,6 +10,7 @@ import {
 
 import { Container, ProductTable, Total } from './styles';
 import * as CartActions from '../../store/modules/Cart/actions';
+import { formatPrice } from '../../util/format';
 
 class Cart extends Component {
   dispatcherHandler(eventName, product) {
@@ -29,14 +30,8 @@ class Cart extends Component {
   }
 
   render() {
-    const { products } = this.props;
+    const { products, total } = this.props;
 
-    const total = products.reduce(
-      (accumulator, product) => product.price * product.amount,
-      0
-    );
-
-    console.log(products);
     return (
       <Container>
         <ProductTable>
@@ -130,6 +125,7 @@ Cart.propTypes = {
   subToCart: PropTypes.func,
   removeFromCart: PropTypes.func,
   addToCart: PropTypes.func,
+  total: PropTypes.string,
 };
 
 Cart.defaultProps = {
@@ -146,10 +142,19 @@ Cart.defaultProps = {
   subToCart: () => {},
   removeFromCart: () => {},
   addToCart: () => {},
+  total: '',
 };
 
 const mapStateToProps = state => ({
-  products: state.cart,
+  products: state.cart.map(product => ({
+    ...product,
+    subTotal: formatPrice(product.price * product.amount),
+  })),
+  total: formatPrice(
+    state.cart.reduce((total, product) => {
+      return total + product.price * product.amount;
+    }, 0)
+  ),
 });
 
 const mapDispatchToProps = dispatch =>

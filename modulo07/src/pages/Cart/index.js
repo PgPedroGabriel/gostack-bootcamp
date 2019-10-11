@@ -10,10 +10,17 @@ import {
 import { Container, ProductTable, Total } from './styles';
 
 class Cart extends Component {
+  dispatcherHandler(EventName, product) {
+    const { dispatch } = this.props;
+
+    dispatch({
+      type: EventName,
+      product,
+    });
+  }
+
   render() {
     const { products } = this.props;
-    console.log(products);
-
     return (
       <Container>
         <ProductTable>
@@ -41,13 +48,23 @@ class Cart extends Component {
 
                 <td>
                   <div>
-                    <button type="button" onClick={() => {}}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        this.dispatcherHandler('SUB_TO_CART', product);
+                      }}
+                    >
                       <MdRemoveCircleOutline size={20} color="#7159c1" />
                     </button>
 
-                    <input type="number" readOnly value={1} />
+                    <input type="number" readOnly value={product.amount} />
 
-                    <button type="button" onClick={() => {}}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        this.dispatcherHandler('ADD_TO_CART', product);
+                      }}
+                    >
                       <MdAddCircleOutline size={20} color="#7159c1" />
                     </button>
                   </div>
@@ -58,7 +75,12 @@ class Cart extends Component {
                 </td>
 
                 <td>
-                  <button type="button" onClick={() => {}}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      this.dispatcherHandler('REMOVE_FROM_CART', product);
+                    }}
+                  >
                     <MdDelete size={20} color="#7159c1" />
                   </button>
                 </td>
@@ -89,6 +111,7 @@ Cart.propTypes = {
       title: PropTypes.string,
     })
   ),
+  dispatch: PropTypes.func,
 };
 
 Cart.defaultProps = {
@@ -102,6 +125,7 @@ Cart.defaultProps = {
       title: 'Tênis de Caminhada Leve Confortável',
     },
   ],
+  dispatch: () => {},
 };
 
 const mapStateToProps = state => ({

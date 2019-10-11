@@ -40,7 +40,7 @@ class Main extends Component {
   addToCart = product => {
     const { addToCart } = this.props;
 
-    addToCart(product);
+    addToCart(product.id);
 
     this.setState({ showAlert: true });
     setTimeout(() => {

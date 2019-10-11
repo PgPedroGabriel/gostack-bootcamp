@@ -13,24 +13,14 @@ import * as CartActions from '../../store/modules/Cart/actions';
 import { formatPrice } from '../../util/format';
 
 class Cart extends Component {
-  dispatcherHandler(eventName, product) {
-    const { addToCart, removeFromCart, subToCart } = this.props;
-
-    if (eventName === 'ADD') {
-      addToCart(product);
-    }
-
-    if (eventName === 'SUB') {
-      subToCart(product);
-    }
-
-    if (eventName === 'REMOVE') {
-      removeFromCart(product);
-    }
-  }
-
   render() {
-    const { products, total } = this.props;
+    const {
+      products,
+      total,
+      addToCart,
+      removeFromCart,
+      subToCart,
+    } = this.props;
 
     return (
       <Container>
@@ -62,7 +52,7 @@ class Cart extends Component {
                     <button
                       type="button"
                       onClick={() => {
-                        this.dispatcherHandler('SUB', product);
+                        subToCart(product);
                       }}
                     >
                       <MdRemoveCircleOutline size={20} color="#7159c1" />
@@ -73,7 +63,7 @@ class Cart extends Component {
                     <button
                       type="button"
                       onClick={() => {
-                        this.dispatcherHandler('ADD', product);
+                        addToCart(product);
                       }}
                     >
                       <MdAddCircleOutline size={20} color="#7159c1" />
@@ -89,7 +79,7 @@ class Cart extends Component {
                   <button
                     type="button"
                     onClick={() => {
-                      this.dispatcherHandler('REMOVE', product);
+                      removeFromCart(product);
                     }}
                   >
                     <MdDelete size={20} color="#7159c1" />

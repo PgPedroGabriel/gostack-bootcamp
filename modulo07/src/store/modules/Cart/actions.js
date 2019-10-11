@@ -1,7 +1,7 @@
-export function addToCart(product) {
+export function addToCart(id) {
   return {
     type: '@cart/ADD',
-    product,
+    id,
   };
 }
 

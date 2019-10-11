@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
+import { bindActionCreators } from 'redux';
 import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
@@ -8,19 +9,34 @@ import {
 } from 'react-icons/md';
 
 import { Container, ProductTable, Total } from './styles';
+import * as CartActions from '../../store/modules/Cart/actions';
 
 class Cart extends Component {
-  dispatcherHandler(EventName, product) {
-    const { dispatch } = this.props;
+  dispatcherHandler(eventName, product) {
+    const { addToCart, removeFromCart, subToCart } = this.props;
 
-    dispatch({
-      type: EventName,
-      product,
-    });
+    if (eventName === 'ADD') {
+      addToCart(product);
+    }
+
+    if (eventName === 'SUB') {
+      subToCart(product);
+    }
+
+    if (eventName === 'REMOVE') {
+      removeFromCart(product);
+    }
   }
 
   render() {
     const { products } = this.props;
+
+    const total = products.reduce(
+      (accumulator, product) => product.price * product.amount,
+      0
+    );
+
+    console.log(products);
     return (
       <Container>
         <ProductTable>
@@ -51,7 +67,7 @@ class Cart extends Component {
                     <button
                       type="button"
                       onClick={() => {
-                        this.dispatcherHandler('SUB_TO_CART', product);
+                        this.dispatcherHandler('SUB', product);
                       }}
                     >
                       <MdRemoveCircleOutline size={20} color="#7159c1" />
@@ -62,7 +78,7 @@ class Cart extends Component {
                     <button
                       type="button"
                       onClick={() => {
-                        this.dispatcherHandler('ADD_TO_CART', product);
+                        this.dispatcherHandler('ADD', product);
                       }}
                     >
                       <MdAddCircleOutline size={20} color="#7159c1" />
@@ -71,14 +87,14 @@ class Cart extends Component {
                 </td>
 
                 <td>
-                  <strong>R$ 150,00</strong>
+                  <strong>{product.subTotal}</strong>
                 </td>
 
                 <td>
                   <button
                     type="button"
                     onClick={() => {
-                      this.dispatcherHandler('REMOVE_FROM_CART', product);
+                      this.dispatcherHandler('REMOVE', product);
                     }}
                   >
                     <MdDelete size={20} color="#7159c1" />
@@ -94,7 +110,7 @@ class Cart extends Component {
 
           <Total>
             <span>Total</span>
-            <strong>R$ 150,00</strong>
+            <strong>{total}</strong>
           </Total>
         </footer>
       </Container>
@@ -111,7 +127,9 @@ Cart.propTypes = {
       title: PropTypes.string,
     })
   ),
-  dispatch: PropTypes.func,
+  subToCart: PropTypes.func,
+  removeFromCart: PropTypes.func,
+  addToCart: PropTypes.func,
 };
 
 Cart.defaultProps = {
@@ -125,10 +143,19 @@ Cart.defaultProps = {
       title: 'Tênis de Caminhada Leve Confortável',
     },
   ],
-  dispatch: () => {},
+  subToCart: () => {},
+  removeFromCart: () => {},
+  addToCart: () => {},
 };
 
 const mapStateToProps = state => ({
   products: state.cart,
 });
-export default connect(mapStateToProps)(Cart);
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Cart);

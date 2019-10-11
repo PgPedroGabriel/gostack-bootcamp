@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { MdAddShoppingCart } from 'react-icons/md';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import { ProductList, Alert } from './styles';
 import { formatPrice } from '../../util/format';
 import api from '../../services/api';
+import * as CartActions from '../../store/modules/Cart/actions';
 
 class Main extends Component {
   constructor(props) {
@@ -36,12 +38,9 @@ class Main extends Component {
   }
 
   addToCart = product => {
-    const { dispatch } = this.props;
+    const { addToCart } = this.props;
 
-    dispatch({
-      type: 'ADD_TO_CART',
-      product,
-    });
+    addToCart(product);
 
     this.setState({ showAlert: true });
     setTimeout(() => {
@@ -85,11 +84,17 @@ class Main extends Component {
 }
 
 Main.propTypes = {
-  dispatch: PropTypes.func,
+  addToCart: PropTypes.func,
 };
 
 Main.defaultProps = {
-  dispatch: () => {},
+  addToCart: () => {},
 };
 
-export default connect()(Main);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Main);

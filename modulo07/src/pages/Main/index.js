@@ -23,12 +23,11 @@ class Main extends Component {
   async componentDidMount() {
     const response = await api.get('/products');
 
+    const data = response.data.map(product => ({
+      ...product,
+      priceFormated: formatPrice(product.price),
+    }));
     if (this.isDidMounted) {
-      const data = response.data.map(product => ({
-        ...product,
-        priceFormated: formatPrice(product.price),
-      }));
-
       this.setState({ products: data });
     }
   }
@@ -38,10 +37,10 @@ class Main extends Component {
   }
 
   addToCart = product => {
-    const { addToCart } = this.props;
+    const { addToCartRequest } = this.props;
 
-    addToCart(product.id);
-
+    addToCartRequest(product.id);
+    /*
     this.setState({ showAlert: true });
     setTimeout(() => {
       if (this.isDidMounted) {
@@ -49,10 +48,12 @@ class Main extends Component {
       }
     }, 1500);
     window.scrollTo(0, 0);
+    */
   };
 
   render() {
     const { products, showAlert } = this.state;
+    const { amount } = this.props;
     return (
       <>
         <Alert display={showAlert.toString()}>
@@ -71,7 +72,8 @@ class Main extends Component {
                 }}
               >
                 <div>
-                  <MdAddShoppingCart size={16} color="#fff" />1
+                  <MdAddShoppingCart size={16} color="#fff" />
+                  {amount[product.id] || 0}
                 </div>
                 <span>Adicionar ao carrinho</span>
               </button>
@@ -84,17 +86,27 @@ class Main extends Component {
 }
 
 Main.propTypes = {
-  addToCart: PropTypes.func,
+  addToCartRequest: PropTypes.func,
+  amount: PropTypes.shape({}),
 };
 
 Main.defaultProps = {
-  addToCart: () => {},
+  addToCartRequest: () => {},
+  amount: {},
 };
+
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    // eslint-disable-next-line no-param-reassign
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(CartActions, dispatch);
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Main);

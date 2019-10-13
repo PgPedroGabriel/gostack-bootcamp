@@ -1,7 +1,14 @@
-export function addToCart(id) {
+export function addToCartRequest(id) {
+  return {
+    type: '@cart/ADD_REQUEST',
+    id,
+  };
+}
+
+export function addToCartSuccess(product) {
   return {
     type: '@cart/ADD',
-    id,
+    product,
   };
 }
 
@@ -14,7 +21,14 @@ export function removeFromCart(product) {
 
 export function subToCart(product) {
   return {
-    type: '@cart/SUB',
+    type: '@cart/SUB_AMOUNT',
     product,
+  };
+}
+
+export function addAmountToCart(id) {
+  return {
+    type: '@cart/ADD_AMOUNT',
+    id,
   };
 }

@@ -17,7 +17,7 @@ class Cart extends Component {
     const {
       products,
       total,
-      addToCart,
+      addToCartRequest,
       removeFromCart,
       subToCart,
     } = this.props;
@@ -63,7 +63,7 @@ class Cart extends Component {
                     <button
                       type="button"
                       onClick={() => {
-                        addToCart(product);
+                        addToCartRequest(product.id);
                       }}
                     >
                       <MdAddCircleOutline size={20} color="#7159c1" />
@@ -114,7 +114,7 @@ Cart.propTypes = {
   ),
   subToCart: PropTypes.func,
   removeFromCart: PropTypes.func,
-  addToCart: PropTypes.func,
+  addToCartRequest: PropTypes.func,
   total: PropTypes.string,
 };
 
@@ -131,7 +131,7 @@ Cart.defaultProps = {
   ],
   subToCart: () => {},
   removeFromCart: () => {},
-  addToCart: () => {},
+  addToCartRequest: () => {},
   total: '',
 };
 

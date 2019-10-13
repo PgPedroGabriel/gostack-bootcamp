@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { PropTypes } from 'prop-types';
-import { bindActionCreators } from 'redux';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
@@ -12,145 +10,101 @@ import { Container, ProductTable, Total } from './styles';
 import * as CartActions from '../../store/modules/Cart/actions';
 import { formatPrice } from '../../util/format';
 
-class Cart extends Component {
-  render() {
-    const {
-      products,
-      total,
-      addToCartRequest,
-      removeFromCart,
-      subToCart,
-    } = this.props;
+function Cart() {
+  const products = useSelector(state =>
+    state.cart.map(product => ({
+      ...product,
+      subTotal: formatPrice(product.price * product.amount),
+    }))
+  );
+  const total = useSelector(state =>
+    formatPrice(
+      state.cart.reduce((sumTotal, product) => {
+        return sumTotal + product.price * product.amount;
+      }, 0)
+    )
+  );
 
-    return (
-      <Container>
-        <ProductTable>
-          <thead>
-            <tr>
-              <th>&nbsp;</th>
-              <th>Produto</th>
-              <th>Quantidade</th>
-              <th>Subtotal</th>
-              <th>&nbsp;</th>
-            </tr>
-          </thead>
+  const dispatch = useDispatch();
 
-          <tbody>
-            {products.map(product => (
-              <tr key={product.id}>
-                <td>
-                  <img src={product.image} alt={product.title} />
-                </td>
+  return (
+    <Container>
+      <ProductTable>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Subtotal</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
 
-                <td>
-                  <strong>{product.title}</strong>
-                  <span>{product.priceFormated}</span>
-                </td>
+        <tbody>
+          {products.map(product => (
+            <tr key={product.id}>
+              <td>
+                <img src={product.image} alt={product.title} />
+              </td>
 
-                <td>
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        subToCart(product);
-                      }}
-                    >
-                      <MdRemoveCircleOutline size={20} color="#7159c1" />
-                    </button>
+              <td>
+                <strong>{product.title}</strong>
+                <span>{product.priceFormated}</span>
+              </td>
 
-                    <input type="number" readOnly value={product.amount} />
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        addToCartRequest(product.id);
-                      }}
-                    >
-                      <MdAddCircleOutline size={20} color="#7159c1" />
-                    </button>
-                  </div>
-                </td>
-
-                <td>
-                  <strong>{product.subTotal}</strong>
-                </td>
-
-                <td>
+              <td>
+                <div>
                   <button
                     type="button"
                     onClick={() => {
-                      removeFromCart(product);
+                      dispatch(CartActions.subToCart(product));
                     }}
                   >
-                    <MdDelete size={20} color="#7159c1" />
+                    <MdRemoveCircleOutline size={20} color="#7159c1" />
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </ProductTable>
 
-        <footer>
-          <button type="button">Finalizar pedido</button>
+                  <input type="number" readOnly value={product.amount} />
 
-          <Total>
-            <span>Total</span>
-            <strong>{total}</strong>
-          </Total>
-        </footer>
-      </Container>
-    );
-  }
+                  <button
+                    type="button"
+                    onClick={() => {
+                      dispatch(CartActions.addToCartRequest(product.id));
+                    }}
+                  >
+                    <MdAddCircleOutline size={20} color="#7159c1" />
+                  </button>
+                </div>
+              </td>
+
+              <td>
+                <strong>{product.subTotal}</strong>
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch(CartActions.removeFromCart(product));
+                  }}
+                >
+                  <MdDelete size={20} color="#7159c1" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </ProductTable>
+
+      <footer>
+        <button type="button">Finalizar pedido</button>
+
+        <Total>
+          <span>Total</span>
+          <strong>{total}</strong>
+        </Total>
+      </footer>
+    </Container>
+  );
 }
-Cart.propTypes = {
-  products: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      image: PropTypes.string,
-      price: PropTypes.number,
-      priceFormated: PropTypes.string,
-      title: PropTypes.string,
-    })
-  ),
-  subToCart: PropTypes.func,
-  removeFromCart: PropTypes.func,
-  addToCartRequest: PropTypes.func,
-  total: PropTypes.string,
-};
 
-Cart.defaultProps = {
-  products: [
-    {
-      id: 1,
-      image:
-        'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis1.jpg',
-      price: 179.9,
-      priceFormated: 'R$ 179,90',
-      title: 'Tênis de Caminhada Leve Confortável',
-    },
-  ],
-  subToCart: () => {},
-  removeFromCart: () => {},
-  addToCartRequest: () => {},
-  total: '',
-};
-
-const mapStateToProps = state => ({
-  products: state.cart.map(product => ({
-    ...product,
-    subTotal: formatPrice(product.price * product.amount),
-  })),
-  total: formatPrice(
-    state.cart.reduce((total, product) => {
-      return total + product.price * product.amount;
-    }, 0)
-  ),
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(CartActions, dispatch);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Cart);
+export default Cart;

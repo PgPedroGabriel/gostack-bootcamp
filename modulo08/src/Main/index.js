@@ -10,7 +10,18 @@ export default function Main() {
   // COMPONENT DID MOUNT
   useEffect(() => {
     setLista(['Nodejs', 'ReactJs', 'React Native']);
+
+    // COMPONENT WILL UNMOUNT
+    return () => {
+      console.log('unmounting');
+    };
   }, []);
+
+  // COMPONENT WILL UPDATE
+  useEffect(() => {
+    console.log(lista);
+    console.log('lista changed');
+  }, [lista]);
 
   return (
     <>

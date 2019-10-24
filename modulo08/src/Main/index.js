@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 export default function Main() {
   // ON CONST
@@ -27,6 +27,15 @@ export default function Main() {
   // na renderização do component, exemplo lista.length
   const listaSize = useMemo(() => lista.length, [lista]);
 
+  // useCallback é como se fosse um usememo, mas ele serve para funções
+  // se você definir uma function dentro do component, toda vez que o component
+  // for montado ou criado, a function vai ser sempre recriada, alterando qualquer
+  // estado, por exemplo, adicionando um item na lista
+  // So utilizamos essas funções quando usamos as variaveis/estados do component
+  const handleAdd = useCallback(() => {
+    setLista([...lista, 'PHP']);
+  }, [lista]);
+
   return (
     <>
       <ul>
@@ -34,6 +43,9 @@ export default function Main() {
           return <li key={l}>{l}</li>;
         })}
         <strong>Você tem {listaSize} items na sua lista</strong>
+        <button type="button" onClick={handleAdd}>
+          Adicionar php
+        </button>
       </ul>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 export default function Main() {
   // ON CONST
@@ -23,12 +23,17 @@ export default function Main() {
     console.log('lista changed');
   }, [lista]);
 
+  // USE MEMO, serve para cálculos de funções que não podem ser chamadas
+  // na renderização do component, exemplo lista.length
+  const listaSize = useMemo(() => lista.length, [lista]);
+
   return (
     <>
       <ul>
         {lista.map(l => {
           return <li key={l}>{l}</li>;
         })}
+        <strong>Você tem {listaSize} items na sua lista</strong>
       </ul>
     </>
   );

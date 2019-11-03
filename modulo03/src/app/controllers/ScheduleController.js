@@ -24,7 +24,7 @@ class ScheduleController {
     const initialDate = startOfDay(parseISO(date));
     const endDate = endOfDay(parseISO(date));
 
-    const appointments = await Appointment.finAll({
+    const appointments = await Appointment.findAll({
       where: {
         date: {
           [Op.between]: [initialDate, endDate],
@@ -36,10 +36,10 @@ class ScheduleController {
         {
           model: User,
           as: 'user',
-          attributes: ['name']
-        }
+          attributes: ['name'],
+        },
       ],
-      order: ['date']
+      order: ['date'],
     });
 
     return res.json(appointments);

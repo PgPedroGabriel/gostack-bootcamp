@@ -28,9 +28,24 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'react/prefer-stateless-function': 'off',
-    'react/jsx-filename-extension': ['warn', {extensions: ['.jsx', '.js']} ],
+    'react/jsx-filename-extension': ['warn', { extensions: ['.jsx', '.js'] }],
     'import/prefer-default-export': 'off',
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn'
+    'react-hooks/exhaustive-deps': 'warn',
+    'no-unused-vars': ['error', { argsIgnorePattern: "^_" }],
+    'global-require': 'off',
+    camelcase: 'off',
+    'no-console': ['error', { allow: ['tron'] }],
+    'no-underscore-dangle': 'off',
+    'no-param-reassign': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
+  settings: {
+    'import/resolver': {
+      'babel-plugin-root-import': {
+        rootPathSuffix: 'src'
+      }
+    }
+  }
 };

@@ -26,7 +26,7 @@ class User extends Sequelize.Model {
     return this;
   }
 
-  static associete(models) {
+  static associate(models) {
     this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
   }
 

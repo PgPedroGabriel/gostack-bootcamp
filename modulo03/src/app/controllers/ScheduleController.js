@@ -1,4 +1,4 @@
-import { startOfDay, endOfDay, parseISO } from 'date-fns/esm';
+import { startOfDay, endOfDay, parseISO } from 'date-fns';
 import { Op } from 'sequelize';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
@@ -32,6 +32,14 @@ class ScheduleController {
         provider_id: req.userId,
         canceled_at: null,
       },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name']
+        }
+      ],
+      order: ['date']
     });
 
     return res.json(appointments);

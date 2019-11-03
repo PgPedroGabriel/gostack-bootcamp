@@ -27,7 +27,7 @@ class SessionController {
         {
           model: File,
           as: 'avatar',
-          attributes: ['path', 'url', 'id'],
+          attributes: ['id', 'path', 'url'],
         },
       ],
     });
@@ -39,7 +39,7 @@ class SessionController {
       return res.status(401).json({ error: 'Usuário ou senha incorretos.' });
     }
 
-    const { id, name, avatar } = user;
+    const { id, name, avatar, provider } = user;
 
     return res.json({
       user: {
@@ -47,6 +47,7 @@ class SessionController {
         name,
         email,
         avatar,
+        provider,
       },
       token: jwt.sign({ id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,

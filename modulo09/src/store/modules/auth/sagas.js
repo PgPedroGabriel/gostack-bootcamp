@@ -35,16 +35,21 @@ export function* signIn({ payload }) {
 
 export function* signUp({ payload }) {
   try {
-    const { name, email, password } = payload;
+    const { name, email, password, confirmPassword } = payload;
 
-    yield call(api.post, 'users', {
+    const { token, user } = yield call(api.post, 'users', {
       name,
       email,
       password,
       provider: true,
+      confirmPassword,
     });
 
-    history.push('/');
+    api.defaults.headers.Authorization = `Bearer ${token}`;
+
+    yield put(signInSuccess(token, user));
+
+    history.push('/dashboard');
   } catch (err) {
     toast.error('Falha no cadastro, verifique seus dados');
 

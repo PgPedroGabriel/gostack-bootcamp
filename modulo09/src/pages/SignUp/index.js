@@ -16,13 +16,16 @@ const schema = Yup.object().shape({
   password: Yup.string()
     .min(6, 'No mínimo 6 caracteres')
     .required('A senha é obrigatória'),
+  confirmPassword: Yup.string().when('password', (password, field) =>
+    password ? field.required().oneOf([Yup.ref('password')]) : field
+  ),
 });
 
 export default function SignUp() {
   const dispatch = useDispatch();
 
-  function handleSubmit({ name, email, password }) {
-    dispatch(signUpRequest(name, email, password));
+  function handleSubmit({ name, email, password, confirmPassword }) {
+    dispatch(signUpRequest(name, email, password, confirmPassword));
   }
 
   return (
@@ -36,6 +39,11 @@ export default function SignUp() {
           name="password"
           type="password"
           placeholder="Sua senha secreta"
+        />
+        <Input
+          name="confirmPassword"
+          type="password"
+          placeholder="Confirme sua senha secreta"
         />
 
         <button type="submit">Criar conta</button>

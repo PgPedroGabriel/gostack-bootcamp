@@ -37,7 +37,7 @@ export function* signUp({ payload }) {
   try {
     const { name, email, password, confirmPassword } = payload;
 
-    const { token, user } = yield call(api.post, 'users', {
+    const response = yield call(api.post, 'users', {
       name,
       email,
       password,
@@ -45,7 +45,12 @@ export function* signUp({ payload }) {
       confirmPassword,
     });
 
+    const { token, user } = response.data;
+
     api.defaults.headers.Authorization = `Bearer ${token}`;
+
+    console.log(token);
+    console.log(user);
 
     yield put(signInSuccess(token, user));
 

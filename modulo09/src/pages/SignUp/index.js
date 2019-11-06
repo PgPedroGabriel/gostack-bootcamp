@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
@@ -16,13 +16,22 @@ const schema = Yup.object().shape({
   password: Yup.string()
     .min(6, 'No mínimo 6 caracteres')
     .required('A senha é obrigatória'),
-  confirmPassword: Yup.string().when('password', (password, field) =>
-    password ? field.required().oneOf([Yup.ref('password')]) : field
-  ),
+  confirmPassword: Yup.string()
+    .required('Campo obrigatório')
+    .when('password', (password, field) =>
+      password
+        ? field.oneOf(
+            [Yup.ref('password')],
+            'Confirmação de senha deve ser igual a senha'
+          )
+        : field
+    ),
 });
 
 export default function SignUp() {
   const dispatch = useDispatch();
+
+  const loading = useSelector(state => state.auth.loading);
 
   function handleSubmit({ name, email, password, confirmPassword }) {
     dispatch(signUpRequest(name, email, password, confirmPassword));
@@ -46,7 +55,9 @@ export default function SignUp() {
           placeholder="Confirme sua senha secreta"
         />
 
-        <button type="submit">Criar conta</button>
+        <button type="submit">
+          {loading ? 'Carregando...' : 'Criar conta'}
+        </button>
         <Link to="/">Já tenho login</Link>
       </Form>
     </>

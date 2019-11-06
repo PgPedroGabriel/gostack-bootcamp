@@ -49,9 +49,6 @@ export function* signUp({ payload }) {
 
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
-    console.log(token);
-    console.log(user);
-
     yield put(signInSuccess(token, user));
 
     history.push('/dashboard');

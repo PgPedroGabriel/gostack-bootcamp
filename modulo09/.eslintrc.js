@@ -31,15 +31,12 @@ module.exports = {
     'react/jsx-filename-extension': ['warn', { extensions: ['.jsx', '.js'] }],
     'import/prefer-default-export': 'off',
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
     'no-unused-vars': ['error', { argsIgnorePattern: "^_" }],
     'global-require': 'off',
-    camelcase: 'off',
+    'camelcase': 'off',
     'no-console': ['error', { allow: ['tron'] }],
     'no-underscore-dangle': 'off',
     'no-param-reassign': 'off',
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
     'import/resolver': {

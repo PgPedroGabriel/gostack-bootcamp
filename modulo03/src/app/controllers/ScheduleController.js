@@ -42,6 +42,8 @@ class ScheduleController {
       order: ['date'],
     });
 
+    appointments.map(a => console.log(a.date.getTime()));
+
     return res.json(appointments);
   }
 }

@@ -72,6 +72,8 @@ class AppointmentController {
         .json({ error: 'Data deve ser maior que a data atual' });
     }
 
+    console.log(hourStart.getTime());
+
     const appointOlder = await Appointment.findOne({
       where: {
         provider_id,
